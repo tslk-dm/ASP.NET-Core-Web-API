@@ -11,78 +11,73 @@ namespace WeatherMetricsManager.Controllers
     [ApiController]
     public class WeatherController : ControllerBase
     {
-        private readonly WeatherList values;
+        private readonly WeatherList _values;
 
         public WeatherController(WeatherList values)
         {
-            this.values = values;
+            this._values = values;
         }
 
         [HttpPost("create")]
-        public IActionResult Create([FromQuery] string dateString, [FromQuery] int temperatureC)
+        public IActionResult Create([FromQuery] DateTime dateTime, [FromQuery] int temperatureC)
         {
-            DateTime dateTime = DateTime.Parse(dateString);
             var weatherValues = new WeatherValues(dateTime, temperatureC);
-            values.weatherValuesList.Add(weatherValues);
+            _values.weatherValuesList.Add(weatherValues);
             return Ok();
         }
+
 
         [HttpGet("read")]
         public IActionResult Read()
         {
-            return Ok(values.weatherValuesList);
+            return Ok(_values.weatherValuesList);
         }
 
         [HttpGet("readInterval")]
-        public IActionResult ReadInterval([FromQuery] string startOfTimeString, [FromQuery] string endOfTimeString)
+        public IActionResult ReadInterval([FromQuery] DateTime startOfTime, [FromQuery] DateTime endOfTime)
         {
-            DateTime startOfTime = DateTime.Parse(startOfTimeString);
-            DateTime endOfTime = DateTime.Parse(endOfTimeString);
-
             List<WeatherValues> readList = new List<WeatherValues>();
-            for (int i = 0; i < values.weatherValuesList.Count; i++)
+            foreach (WeatherValues item in _values.weatherValuesList)
             {
-                if (startOfTime <= values.weatherValuesList[i].Date && 
-                    values.weatherValuesList[i].Date <= endOfTime)
+                if (startOfTime <= item.Date &&
+                    item.Date <= endOfTime)
                 {
-                    readList.Add(values.weatherValuesList[i]);
+                    readList.Add(item);
                 }
-
             }
+
             return Ok(readList);
         }
 
         [HttpPut("update")]
-        public IActionResult Update([FromQuery] string dateString, [FromQuery] int temperatureC)
+        public IActionResult Update([FromQuery] DateTime dateTime, [FromQuery] int temperatureC)
         {
-            DateTime dateTime = DateTime.Parse(dateString);
-            for (int i = 0; i < values.weatherValuesList.Count; i++)
+            foreach (var item in _values.weatherValuesList)
             {
-                if (values.weatherValuesList[i].Date == dateTime)
-                    values.weatherValuesList[i].TemperatureC = temperatureC;
+                if (item.Date == dateTime)
+                {
+                    item.TemperatureC = temperatureC;
+                } 
             }
 
             return Ok();
         }
 
         [HttpDelete("delete")]
-        public IActionResult Delete([FromQuery] string startOfTimeString, [FromQuery] string endOfTimeString)
+        public IActionResult Delete([FromQuery] DateTime startOfTime, [FromQuery] DateTime endOfTime)
         {
-            DateTime startOfTime = DateTime.Parse(startOfTimeString);
-            DateTime endOfTime = DateTime.Parse(endOfTimeString);
-
-            for (int i = 0; i < values.weatherValuesList.Count; i++)
+            for (int i = _values.weatherValuesList.Count - 1; i >= 0; i--)
             {
-                if (startOfTime <= values.weatherValuesList[i].Date &&
-                    values.weatherValuesList[i].Date <= endOfTime)
+                if (startOfTime <= _values.weatherValuesList[i].Date &&
+                    _values.weatherValuesList[i].Date <= endOfTime)
                 {
-                    values.weatherValuesList.RemoveAt(i);
-                    i--;
+                    _values.weatherValuesList.RemoveAt(i);
                 }
-                
+
             }
 
             return Ok();
         }
+ 
     }
 }
