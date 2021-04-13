@@ -11,7 +11,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/metrics/ram/available",
+      "launchUrl": "api/metrics/cpu/from/1/to/100",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

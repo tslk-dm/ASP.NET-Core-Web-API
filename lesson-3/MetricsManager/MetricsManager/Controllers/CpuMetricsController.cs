@@ -27,6 +27,7 @@ namespace MetricsManager.Controllers
             [FromRoute] TimeSpan toTime)
         {
             _logger.LogInformation("Привет! Это наше первое сообщение в лог");
+            _logger.LogInformation($"Входные параметры: agent {agentId} from {fromTime} to {toTime}");
             return Ok();
         }
 
@@ -34,8 +35,10 @@ namespace MetricsManager.Controllers
         public IActionResult GetMetricsByPercentileFromAgent(
             [FromRoute] int agentId,
             [FromRoute] TimeSpan fromTime,
-            [FromRoute] TimeSpan toTime)
+            [FromRoute] TimeSpan toTime,
+            [FromRoute] Percentile percentile)
         {
+            _logger.LogInformation($"Входные параметры: agent {agentId} from {fromTime} to {toTime}");
             return Ok();
         }
 
